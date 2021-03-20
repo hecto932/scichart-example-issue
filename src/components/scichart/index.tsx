@@ -88,14 +88,13 @@ const draw = async (
   return { sciChartSurface, wasmContext };
 };
 
-const divElement = "scichart-root";
-
 interface Props {
+  id: string;
   data?: any;
   annotations?: Array<IAnnotation>;
 }
 
-const Scichart: FC<Props> = ({ data = {}, annotations = [] }) => {
+const Scichart: FC<Props> = ({ id, data = {}, annotations = [] }) => {
   const [chartReady, setChartReady] = useState(false);
   const [sciChartSurface, setSciChartSurface] = useState<SciChartSurface>();
   const [wasmContext, setWasmContext] = useState<TSciChart>();
@@ -192,21 +191,19 @@ const Scichart: FC<Props> = ({ data = {}, annotations = [] }) => {
   };
 
   const setTooltip = (resScichartSurface: SciChartSurface) => {
-    if (resScichartSurface) {
-      const tooltipModifier = new RolloverModifier({
-        rolloverLineStroke: "SteelBlue",
-        rolloverLineStrokeThickness: 5,
-        isVerticalChart: orientation === "vertical",
-      });
-
-      tooltipModifier.onDetach = () =>
-        console.log("tooltip rolloverModifier removed!");
-      tooltipModifier.onAttach = () =>
-        console.log("tooltip rolloverModifier attached");
-
-      resScichartSurface.chartModifiers.add(tooltipModifier);
-      setSciChartTooltip(tooltipModifier);
+    if (!resScichartSurface) {
+      return;
     }
+
+    const tooltipModifier = new RolloverModifier();
+
+    tooltipModifier.onDetach = () =>
+      console.log("tooltip rolloverModifier removed!");
+    tooltipModifier.onAttach = () =>
+      console.log("tooltip rolloverModifier attached");
+
+    resScichartSurface.chartModifiers.add(new RolloverModifier());
+    setSciChartTooltip(tooltipModifier);
   };
 
   const setZoomPanModifier = (resScichartSurface: SciChartSurface) => {
@@ -222,18 +219,18 @@ const Scichart: FC<Props> = ({ data = {}, annotations = [] }) => {
   const setMouseWheelZoomModifier = (resScichartSurface: SciChartSurface) => {
     const mouseWheelZoomModifier = new MouseWheelZoomModifier();
     mouseWheelZoomModifier.onDetach = () =>
-      console.log("mouseWheelZoomModifier removed!");
+      console.log(`${id}: mouseWheelZoomModifier removed!`);
     mouseWheelZoomModifier.onAttach = () =>
-      console.log("mouseWheelZoomModifier attached");
+      console.log(`${id}: mouseWheelZoomModifier attached`);
     resScichartSurface.chartModifiers.add(mouseWheelZoomModifier);
   };
 
   const setZoomExtentsModifier = (resScichartSurface: SciChartSurface) => {
     const zoomExtentsModifier = new ZoomExtentsModifier();
     zoomExtentsModifier.onDetach = () =>
-      console.log("zoomExtentsModifier removed!");
+      console.log(`${id}: zoomExtentsModifier removed!`);
     zoomExtentsModifier.onAttach = () =>
-      console.log("zoomExtentsModifier attached");
+      console.log(`${id}: zoomExtentsModifier attached`);
     resScichartSurface.chartModifiers.add(zoomExtentsModifier);
   };
 
@@ -251,9 +248,9 @@ const Scichart: FC<Props> = ({ data = {}, annotations = [] }) => {
       xyDirection: EXyDirection.YDirection,
     });
     rubberBandXyZoomModifier.onAttach = () =>
-      console.log(`${divElement}: rubberBandXyZoomModifier attached!`);
+      console.log(`${id}: rubberBandXyZoomModifier attached!`);
     rubberBandXyZoomModifier.onDetach = () =>
-      console.log(`${divElement}: rubberBandXyZoomModifier detached!`);
+      console.log(`${id}: rubberBandXyZoomModifier detached!`);
 
     rubberBandXyZoomModifier.modifierMouseUp = () => {
       console.log("Calling a function after zoom in by area");
@@ -262,9 +259,9 @@ const Scichart: FC<Props> = ({ data = {}, annotations = [] }) => {
     const zoomPanModifier = new ZoomPanModifier();
 
     zoomPanModifier.onAttach = () =>
-      console.log(`${divElement}: zoomPanModifier attached!`);
+      console.log(`${id}: zoomPanModifier attached!`);
     zoomPanModifier.onDetach = () =>
-      console.log(`${divElement}: zoomPanModifier detached!`);
+      console.log(`${id}: zoomPanModifier detached!`);
 
     if (active && sciChartRubberModifier) {
       resScichartSurface.chartModifiers.remove(sciChartRubberModifier);
@@ -329,7 +326,7 @@ const Scichart: FC<Props> = ({ data = {}, annotations = [] }) => {
 
   useEffect(() => {
     (async () => {
-      const res = await draw(divElement, orientation, {});
+      const res = await draw(id, orientation, {});
       setSciChartSurface(res.sciChartSurface);
       setWasmContext(res.wasmContext);
       addLineDataSeries(res.sciChartSurface, res.wasmContext);
@@ -350,7 +347,7 @@ const Scichart: FC<Props> = ({ data = {}, annotations = [] }) => {
   return (
     <>
       <div
-        id={divElement}
+        id={id}
         style={{
           position: "relative",
           width: 1024,
@@ -358,8 +355,8 @@ const Scichart: FC<Props> = ({ data = {}, annotations = [] }) => {
         }}
       />
       <button onClick={onHandleOrientation}>
-        Change orientation to{" "}
-        {orientation === "vertical" ? "horizontal" : "vertical"}
+        Change orientation to
+        {orientation === " vertical" ? " horizontal" : " vertical"}
       </button>
       <button onClick={onHandleScichartLegend}>Show/hide Legend</button>
       <button onClick={onHandleRemoveAnnotations}>
