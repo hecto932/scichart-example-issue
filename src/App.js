@@ -1,25 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import Scichart from "./components/scichart";
+import { data as mockData } from './data/sampleData';
 
-function App() {
+const App = () => {
+  const [columns, setColumns] = useState([]);
+  const [data, setData] = useState([]);
+
+  const [sampleData, setSampleData] = useState({});
+
+  useEffect(() => {
+    setInterval(() => {
+      console.log('useEffect =>', sampleData, Math.random());
+      if (Math.random() < 0.5) {
+        console.log('Setting data');
+        setSampleData(mockData);
+      } else {
+        console.log('Removing data');
+        setSampleData({});
+      }
+    }, 3000);
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Testing</h1>
+      <Scichart
+        orientation="vertical"
+        data={sampleData}
+      />
     </div>
   );
-}
+};
 
 export default App;
