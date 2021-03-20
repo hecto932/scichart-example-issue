@@ -25,6 +25,7 @@ const App = () => {
         id="scichart-root-1"
         data={sampleData}
       />
+      <br />
       <Scichart
         id="scichart-root-2"
         data={data}

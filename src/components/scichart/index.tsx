@@ -191,25 +191,23 @@ const Scichart: FC<Props> = ({ id, data = {}, annotations = [] }) => {
   };
 
   const setTooltip = (resScichartSurface: SciChartSurface) => {
-    if (!resScichartSurface) {
-      return;
-    }
-
     const tooltipModifier = new RolloverModifier();
 
     tooltipModifier.onDetach = () =>
-      console.log("tooltip rolloverModifier removed!");
+      console.log(`${id}: tooltip rolloverModifier removed!`);
     tooltipModifier.onAttach = () =>
-      console.log("tooltip rolloverModifier attached");
+      console.log(`${id}: tooltip rolloverModifier attached`);
 
-    resScichartSurface.chartModifiers.add(new RolloverModifier());
+    resScichartSurface.chartModifiers.add(tooltipModifier);
     setSciChartTooltip(tooltipModifier);
   };
 
   const setZoomPanModifier = (resScichartSurface: SciChartSurface) => {
     const zoomPanModifier = new ZoomPanModifier();
-    zoomPanModifier.onAttach = () => console.log("zoomPanModifier attached!");
-    zoomPanModifier.onDetach = () => console.log("zoomPanModifier detached!");
+    zoomPanModifier.onAttach = () =>
+      console.log(`${id}: zoomPanModifier attached!`);
+    zoomPanModifier.onDetach = () =>
+      console.log(`${id}: zoomPanModifier detached!`);
 
     // Add Zoom Extents behavior
     resScichartSurface.chartModifiers.add(zoomPanModifier);
@@ -232,46 +230,6 @@ const Scichart: FC<Props> = ({ id, data = {}, annotations = [] }) => {
     zoomExtentsModifier.onAttach = () =>
       console.log(`${id}: zoomExtentsModifier attached`);
     resScichartSurface.chartModifiers.add(zoomExtentsModifier);
-  };
-
-  const setPanToolModifier = (
-    resScichartSurface: SciChartSurface,
-    active: boolean
-  ) => {
-    const rubberBandXyZoomModifier = new RubberBandXyZoomModifier({
-      isAnimated: true,
-      animationDuration: 400,
-      easingFunction: easing.outExpo,
-      fill: "#FFFFFF33",
-      stroke: "#FFFFFF77",
-      strokeThickness: 1,
-      xyDirection: EXyDirection.YDirection,
-    });
-    rubberBandXyZoomModifier.onAttach = () =>
-      console.log(`${id}: rubberBandXyZoomModifier attached!`);
-    rubberBandXyZoomModifier.onDetach = () =>
-      console.log(`${id}: rubberBandXyZoomModifier detached!`);
-
-    rubberBandXyZoomModifier.modifierMouseUp = () => {
-      console.log("Calling a function after zoom in by area");
-    };
-
-    const zoomPanModifier = new ZoomPanModifier();
-
-    zoomPanModifier.onAttach = () =>
-      console.log(`${id}: zoomPanModifier attached!`);
-    zoomPanModifier.onDetach = () =>
-      console.log(`${id}: zoomPanModifier detached!`);
-
-    if (active && sciChartRubberModifier) {
-      resScichartSurface.chartModifiers.remove(sciChartRubberModifier);
-      resScichartSurface.chartModifiers.add(zoomPanModifier);
-      setSciChartRubberModifier(zoomPanModifier);
-    } else {
-      resScichartSurface.chartModifiers.remove(sciChartRubberModifier);
-      resScichartSurface.chartModifiers.add(rubberBandXyZoomModifier);
-      setSciChartRubberModifier(rubberBandXyZoomModifier);
-    }
   };
 
   const setAnnotations = (resScichartSurface: SciChartSurface) => {
