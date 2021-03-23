@@ -20,7 +20,6 @@ import {
 } from "scichart/Charting/Visuals/Legend/SciChartLegendBase";
 import { FastLineRenderableSeries } from "scichart/Charting/Visuals/RenderableSeries/FastLineRenderableSeries";
 import { LegendModifier } from "scichart/Charting/ChartModifiers/LegendModifier";
-import { RolloverModifier } from "scichart/Charting/ChartModifiers/RolloverModifier";
 import { TSciChart } from "scichart/types/TSciChart";
 
 import { ZoomPanModifier } from "scichart/Charting/ChartModifiers/ZoomPanModifier";
@@ -31,6 +30,7 @@ import { RubberBandXyZoomModifier } from "scichart/Charting/ChartModifiers/Rubbe
 import { EXyDirection } from "scichart/types/XyDirection";
 import { easing } from "scichart/Core/Animations/EasingFunctions";
 import { IAnnotation } from "scichart/Charting/Visuals/Annotations/IAnnotation";
+import { CustomRolloverModifier } from "./CustomModifiers/CustomRolloverModifier";
 
 export const randomColor = () => {
   const x = Math.round(0xffffff * Math.random()).toString(16);
@@ -191,12 +191,13 @@ const Scichart: FC<Props> = ({ id, data = {}, annotations = [] }) => {
   };
 
   const setTooltip = (resScichartSurface: SciChartSurface) => {
-    const tooltipModifier = new RolloverModifier();
-
-    tooltipModifier.onDetach = () =>
-      console.log(`${id}: tooltip rolloverModifier removed!`);
-    tooltipModifier.onAttach = () =>
-      console.log(`${id}: tooltip rolloverModifier attached`);
+    const tooltipModifier = new CustomRolloverModifier(
+      {
+        rolloverLineStrokeThickness: 5,
+        isVerticalChart: orientation === "vertical",
+      },
+      id
+    );
 
     resScichartSurface.chartModifiers.add(tooltipModifier);
     setSciChartTooltip(tooltipModifier);
