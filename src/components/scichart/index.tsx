@@ -42,7 +42,7 @@ export const randomColor = () => {
   return color;
 };
 
-const formatAxis = (tickItem: number) => format(tickItem, "MM/dd HH:mm a");
+const formatAxis = (tickItem: number) => format(tickItem, "yyyy/MM/dd HH:mm a");
 const numberToFix = (tickItem: number) => tickItem.toFixed(2);
 
 const draw = async (
@@ -234,7 +234,8 @@ const Scichart: FC<Props> = ({ id, data = {}, annotations = [] }) => {
   };
 
   const setAnnotations = (resScichartSurface: SciChartSurface) => {
-    resScichartSurface.annotations.clear();
+    console.log("setAnnotations => ", annotations);
+    // resScichartSurface.annotations.clear();
 
     // ADD ANNOTATIONS
     annotations.forEach((item: IAnnotation) => {
@@ -267,15 +268,16 @@ const Scichart: FC<Props> = ({ id, data = {}, annotations = [] }) => {
     }
 
     addLineDataSeries(sciChartSurface, wasmContext);
+    // setAnnotations(sciChartSurface);
   }, [data]);
 
-  useEffect(() => {
-    if (!sciChartSurface) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (!sciChartSurface) {
+  //     return;
+  //   }
 
-    setAnnotations(sciChartSurface);
-  }, [annotations]);
+  //   setAnnotations(sciChartSurface);
+  // }, [annotations]);
 
   useEffect(() => {
     if (sciChartSurface) {
@@ -294,6 +296,7 @@ const Scichart: FC<Props> = ({ id, data = {}, annotations = [] }) => {
       setMouseWheelZoomModifier(res.sciChartSurface);
       setZoomExtentsModifier(res.sciChartSurface);
       setTooltip(res.sciChartSurface);
+      setAnnotations(res.sciChartSurface);
       setChartReady(true);
     })();
 
@@ -321,6 +324,11 @@ const Scichart: FC<Props> = ({ id, data = {}, annotations = [] }) => {
       <button onClick={onHandleRemoveAnnotations}>
         {annotations.length ? `Remove Annotations` : "Add annotations"}
       </button>
+      <p>
+        Annotations between {new Date(1612288800000).toLocaleTimeString()}
+        {" and "}
+        {new Date(1612386000000).toLocaleTimeString()}
+      </p>
     </>
   );
 };
